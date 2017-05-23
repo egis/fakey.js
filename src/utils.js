@@ -71,7 +71,9 @@ var getSel = function (el) {
 //
 // Set the caret position at a specified location - IE variation
 //
-var setSelIe = function(el, pos, e) {
+var setSelAlt = function(el, pos, e) {
+    console.warn("fakey is going to try to set the caret in alternate way", el, pos, e);
+    // IE = TextRange fun
     if (el.createTextRange) {
         var range = el.createTextRange();
         range.collapse(true);
@@ -83,7 +85,6 @@ var setSelIe = function(el, pos, e) {
             console.error('fakey failed to set the caret', el, pos, e);
         }
     } else {
-        console.error("fakey failed to set the caret", el, pos, e);
     }
 };
 
@@ -91,17 +92,20 @@ var setSelIe = function(el, pos, e) {
 // Set the caret position at a specified location
 //
 var setSel = function (el, pos) {
+    if (window.is && window.is.ie()) {
+        console.info("fakey will not try to set the caret for IE", el, pos);
+        return;
+    }
 // If normal browser
   if (el.setSelectionRange) {
     el.focus();
     try {
        el.setSelectionRange(pos, pos);
     } catch (e) {
-        setSelIe(el, pos, e);
+        setSelAlt(el, pos, e);
     }
-  // IE = TextRange fun
   } else {
-    setSelIe(el, pos);
+    setSelAlt(el, pos);
   }
 };
 
